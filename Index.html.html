@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Escola de SQL</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f0eb;color:#1a1a1a;min-height:100vh;padding:1rem}
+.app{max-width:640px;margin:0 auto}
+h1{font-size:20px;font-weight:600;margin-bottom:2px}
+.subtitle{font-size:13px;color:#666;margin-bottom:1rem}
+.nav{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap}
+.nav button{padding:7px 13px;border-radius:20px;border:1.5px solid #ddd;background:#fff;color:#555;font-size:12px;cursor:pointer;font-weight:500;-webkit-appearance:none}
+.nav button.active{background:#3C3489;color:#fff;border-color:#3C3489}
+.screen{display:none}
+.screen.active{display:block}
+.card{background:#fff;border-radius:14px;padding:1.1rem;margin-bottom:.9rem;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.bp{background:#EEEDFE;color:#3C3489}
+.bt{background:#E1F5EE;color:#085041}
+.ba{background:#FAEEDA;color:#633806}
+.bg{background:#EAF3DE;color:#27500A}
+h3{font-size:15px;font-weight:600;margin-bottom:.6rem;color:#1a1a1a}
+p{font-size:13px;color:#555;line-height:1.7;margin-bottom:.6rem}
+.code{background:#f0f0eb;border-radius:8px;padding:10px 13px;font-family:'Courier New',monospace;font-size:12px;margin:.6rem 0;color:#1a1a1a;line-height:1.7;white-space:pre-wrap;word-break:break-all}
+.tw{overflow-x:auto;margin:.6rem 0}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#f0f0eb;padding:7px 10px;text-align:left;border:1px solid #e0e0db;color:#555;font-weight:600}
+td{padding:7px 10px;border:1px solid #e0e0db}
+.btn{display:block;padding:12px 20px;border-radius:10px;border:1.5px solid #ddd;background:#fff;color:#1a1a1a;font-size:14px;cursor:pointer;font-weight:500;-webkit-appearance:none;width:100%;text-align:center;margin-top:.5rem;font-family:inherit}
+.btn-p{background:#3C3489;color:#fff;border-color:#3C3489}
+.btn-s{background:#fff;color:#3C3489;border-color:#3C3489}
+.pbar{height:6px;background:#e0e0db;border-radius:99px;margin-bottom:1.1rem;overflow:hidden}
+.pfill{height:100%;background:#7F77DD;border-radius:99px;transition:width .4s}
+.litem{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;border:1.5px solid #e0e0db;background:#fff;cursor:pointer;margin-bottom:8px}
+.litem.done{border-color:#97C459;background:#f8fdf2}
+.licon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.li-done{background:#EAF3DE;color:#27500A}
+.li-todo{background:#EEEDFE;color:#3C3489}
+.opt{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid #ddd;background:#fff;color:#1a1a1a;font-size:13px;cursor:pointer;text-align:left;margin-bottom:7px;display:block;font-family:inherit;-webkit-appearance:none;line-height:1.5}
+.opt.ok{background:#EAF3DE;color:#27500A;border-color:#97C459}
+.opt.err{background:#FCEBEB;color:#791F1F;border-color:#F09595}
+.fb{padding:10px 13px;border-radius:10px;font-size:13px;margin-top:.6rem;display:none;line-height:1.6}
+.fb.show{display:block}
+.fb.ok{background:#EAF3DE;color:#27500A;border:1px solid #97C459}
+.fb.err{background:#FCEBEB;color:#791F1F;border:1px solid #F09595}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1rem}
+.stat{background:#f0f0eb;border-radius:10px;padding:10px;text-align:center}
+.stat-n{font-size:20px;font-weight:700;color:#3C3489}
+.stat-l{font-size:11px;color:#666;margin-top:2px}
+.step{font-size:12px;color:#666;margin-bottom:.6rem}
+.cert-box{border:2px solid #7F77DD;border-radius:14px;padding:1.5rem;text-align:center;background:#fff}
+.cert-score{font-size:52px;font-weight:700;color:#3C3489}
+hr{border:none;border-top:1px solid #e0e0db;margin:.9rem 0}
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>&#128218; Escola de SQL</h1>
+  <p class="subtitle">Aprenda SQL do zero — aulas, exercicios e certificado.</p>
+
+  <div class="nav">
+    <button id="nb-home" class="active" onclick="goTo('home')">Inicio</button>
+    <button id="nb-lessons" onclick="goTo('lessons')">Aulas</button>
+    <button id="nb-quiz" onclick="goTo('quiz')">Exercicios</button>
+    <button id="nb-exam" onclick="goTo('exam')">Simulado</button>
+    <button id="nb-cert" onclick="goTo('cert')">Certificado</button>
+  </div>
+
+  <div id="screen-home" class="screen active">
+    <div class="card">
+      <h3>Seu progresso</h3>
+      <div class="pbar"><div class="pfill" id="hp" style="width:0%"></div></div>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-n" id="s-aulas">0/6</div><div class="stat-l">Aulas</div></div>
+        <div class="stat"><div class="stat-n" id="s-exerc">0/10</div><div class="stat-l">Exercicios</div></div>
+        <div class="stat"><div class="stat-n" id="s-sim">--</div><div class="stat-l">Simulado</div></div>
+      </div>
+      <button class="btn btn-p" onclick="goTo('lessons')">Ir para as aulas</button>
+    </div>
+    <div class="card">
+      <h3>Conteudo do curso</h3>
+      <p><span class="badge bp">Modulo 1</span> &nbsp;SELECT, FROM, WHERE, ORDER BY</p>
+      <p><span class="badge bt">Modulo 2</span> &nbsp;COUNT, SUM, AVG, GROUP BY, JOIN</p>
+      <p><span class="badge ba">Modulo 3</span> &nbsp;Subqueries, CTEs, boas praticas</p>
+      <p style="margin-bottom:0"><span class="badge bg">Final</span> &nbsp;Simulado + Certificado</p>
+    </div>
+  </div>
+
+  <div id="screen-lessons" class="screen">
+    <h3 style="margin-bottom:.8rem">Modulo 1 - Fundamentos</h3>
+    <div id="lesson-list"></div>
+    <div id="lesson-content" style="display:none;margin-top:1rem"></div>
+  </div>
+
+  <div id="screen-quiz" class="screen">
+    <div id="qz-start">
+      <div class="card">
+        <h3>Exercicios praticos</h3>
+        <p>10 questoes de multipla escolha com correcao automatica e explicacao.</p>
+        <button class="btn btn-p" onclick="startQuiz()">Comecar exercicios</button>
+      </div>
+    </div>
+    <div id="qz-area" style="display:none">
+      <div class="step" id="qz-step"></div>
+      <div class="pbar"><div class="pfill" id="qz-pf" style="width:0%"></div></div>
+      <div class="card" id="qz-card"></div>
+      <div id="qz-nw" style="display:none;margin-top:.5rem">
+        <button class="btn btn-p" id="qz-next" onclick="nextQuiz()">Proxima</button>
+      </div>
+    </div>
+    <div id="qz-result" style="display:none"></div>
+  </div>
+
+  <div id="screen-exam" class="screen">
+    <div id="ex-start">
+      <div class="card">
+        <h3>Simulado de certificacao</h3>
+        <p>15 questoes cobrindo todo o conteudo. Voce precisa de <b style="color:#1a1a1a">70% ou mais</b> para o certificado.</p>
+        <button class="btn btn-p" onclick="startExam()">Iniciar simulado</button>
+      </div>
+    </div>
+    <div id="ex-area" style="display:none">
+      <div class="step" id="ex-step"></div>
+      <div class="pbar"><div class="pfill" id="ex-pf" style="width:0%"></div></div>
+      <div class="card" id="ex-card"></div>
+      <div id="ex-nw" style="display:none;margin-top:.5rem">
+        <button class="btn btn-p" id="ex-next" onclick="nextExam()">Proxima</button>
+      </div>
+    </div>
+    <div id="ex-result" style="display:none"></div>
+  </div>
+
+  <div id="screen-cert" class="screen">
+    <div id="cert-lock" class="card" style="text-align:center;padding:1.5rem">
+      <div style="font-size:36px;margin-bottom:.5rem">&#128274;</div>
+      <h3>Certificado bloqueado</h3>
+      <p>Complete o simulado com 70% ou mais para desbloquear.</p>
+      <button class="btn btn-p" onclick="goTo('exam')">Ir ao simulado</button>
+    </div>
+    <div id="cert-show" style="display:none">
+      <div class="cert-box">
+        <p style="font-size:11px;color:#999;letter-spacing:1px">CERTIFICADO DE CONCLUSAO</p>
+        <hr>
+        <p style="font-size:13px;margin:.5rem 0 .2rem">Este certificado confirma que</p>
+        <div style="font-size:18px;font-weight:700;color:#3C3489;margin:.4rem 0">Voce</div>
+        <p style="font-size:13px">concluiu com sucesso o curso</p>
+        <div style="font-size:15px;font-weight:600;margin:.4rem 0">SQL: Do Zero ao Basico</div>
+        <hr>
+        <div class="cert-score" id="cert-pct">--</div>
+        <p style="font-size:12px;margin-top:.2rem">de aproveitamento no simulado final</p>
+        <hr>
+        <p style="font-size:11px;color:#999">Escola de SQL &middot; <span id="cert-dt"></span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var S={done:[],qScore:null,eScore:null,ePassed:false};
+
+var LS=[
+  {id:1,title:'Bancos de dados e tabelas',badge:'Aula 1',html:function(){return '<span class="badge bp">Aula 1</span><h3 style="margin-top:.6rem">Bancos de dados e tabelas</h3><p>Um banco de dados e como uma pasta com varias planilhas. Cada <b>tabela</b> tem <b>colunas</b> (categorias) e <b>linhas</b> (registros).</p><div class="tw"><table><thead><tr><th>id</th><th>nome</th><th>cidade</th><th>idade</th></tr></thead><tbody><tr><td>1</td><td>Ana Silva</td><td>Sao Paulo</td><td>28</td></tr><tr><td>2</td><td>Carlos Lima</td><td>Osasco</td><td>35</td></tr></tbody></table></div><p>Cada linha e um registro unico. O <b>id</b> e o identificador unico de cada linha.</p>';}},
+  {id:2,title:'SELECT e FROM',badge:'Aula 2',html:function(){return '<span class="badge bp">Aula 2</span><h3 style="margin-top:.6rem">SELECT e FROM</h3><p><b>SELECT</b> escolhe as colunas. <b>FROM</b> define a tabela. Virgula separa colunas - nunca AND.</p><div class="code">SELECT nome, cidade\nFROM clientes</div><p>Use * para todas as colunas:</p><div class="code">SELECT *\nFROM clientes</div>';}},
+  {id:3,title:'WHERE - filtrando dados',badge:'Aula 3',html:function(){return '<span class="badge bp">Aula 3</span><h3 style="margin-top:.6rem">WHERE - filtrando dados</h3><p>Filtra linhas por condicao. Textos com aspas simples, numeros sem aspas.</p><div class="code">SELECT *\nFROM clientes\nWHERE cidade = \'Sao Paulo\'</div><p>Combine com AND e OR:</p><div class="code">SELECT *\nFROM clientes\nWHERE cidade = \'Osasco\' AND idade > 30</div><p>Operadores: =  &lt;&gt;  &gt;  &lt;  &gt;=  &lt;=</p>';}},
+  {id:4,title:'ORDER BY - ordenando',badge:'Aula 4',html:function(){return '<span class="badge bp">Aula 4</span><h3 style="margin-top:.6rem">ORDER BY</h3><p>Ordena crescente (padrao) ou decrescente com DESC:</p><div class="code">SELECT produto, preco\nFROM produtos\nORDER BY preco DESC</div><p>Ordem fixa: SELECT > FROM > WHERE > ORDER BY</p>';}},
+  {id:5,title:'Funcoes de resumo',badge:'Aula 5',html:function(){return '<span class="badge bt">Aula 5</span><h3 style="margin-top:.6rem">Funcoes de resumo</h3><p>Regra de ouro: so COUNT aceita *, os outros precisam de coluna especifica.</p><div class="code">SELECT COUNT(*) FROM clientes\nSELECT SUM(preco) FROM produtos\nSELECT AVG(preco) FROM produtos\nSELECT MAX(preco), MIN(preco) FROM produtos</div>';}},
+  {id:6,title:'GROUP BY e HAVING',badge:'Aula 6',html:function(){return '<span class="badge bt">Aula 6</span><h3 style="margin-top:.6rem">GROUP BY e HAVING</h3><p>GROUP BY agrupa linhas por categoria:</p><div class="code">SELECT categoria, COUNT(*)\nFROM produtos\nGROUP BY categoria</div><p>HAVING filtra grupos (WHERE filtra linhas):</p><div class="code">SELECT categoria, COUNT(*)\nFROM produtos\nGROUP BY categoria\nHAVING COUNT(*) > 2</div>';}}
+];
+
+var QZ=[
+  {q:'Qual comando seleciona dados em SQL?',o:['SELECT','FETCH','GET','TAKE'],c:0,e:'SELECT e o comando principal para buscar dados.'},
+  {q:'Como selecionar TODAS as colunas?',o:['SELECT ALL','SELECT *','SELECT COLUMNS','SELECT EVERY'],c:1,e:'O asterisco * representa todas as colunas.'},
+  {q:'Qual clausula filtra linhas?',o:['FILTER','HAVING','WHERE','LIMIT'],c:2,e:'WHERE filtra linhas com base em uma condicao.'},
+  {q:'Como texto e escrito no WHERE?',o:['Aspas duplas','Sem aspas','Aspas simples','Colchetes'],c:2,e:"Textos sempre com aspas simples: 'Sao Paulo'."},
+  {q:'Qual operador significa diferente de?',o:['!=','=/=','<>','NOT'],c:2,e:'O operador <> significa diferente de em SQL.'},
+  {q:'Para ordenar do maior ao menor usa-se:',o:['ORDER BY ASC','ORDER BY DESC','SORT DESC','ORDER DOWN'],c:1,e:'DESC significa decrescente - do maior para o menor.'},
+  {q:'Qual funcao conta linhas?',o:['SUM(*)','COUNT(*)','TOTAL(*)','NUM(*)'],c:1,e:'COUNT(*) conta todas as linhas de uma tabela.'},
+  {q:'Qual a ordem correta dos comandos?',o:['FROM-SELECT-WHERE','WHERE-FROM-SELECT','SELECT-FROM-WHERE','SELECT-WHERE-FROM'],c:2,e:'A ordem e SELECT > FROM > WHERE > ORDER BY.'},
+  {q:'Para somar valores de uma coluna:',o:['COUNT(col)','TOTAL(col)','SUM(col)','ADD(col)'],c:2,e:'SUM(coluna) soma todos os valores de uma coluna.'},
+  {q:'Qual clausula filtra GRUPOS?',o:['WHERE','FILTER','HAVING','GROUP WHERE'],c:2,e:'HAVING filtra grupos, WHERE filtra linhas.'}
+];
+
+var EX=[
+  {q:'O que significa SQL?',o:['Structured Query Language','Simple Query Logic','System Query Layer','Structured Question List'],c:0,e:'SQL = Structured Query Language.'},
+  {q:'Qual mostra nome e cidade da tabela clientes?',o:['SELECT * FROM clientes','SELECT nome cidade FROM clientes','SELECT nome, cidade FROM clientes','GET nome, cidade FROM clientes'],c:2,e:'Virgula separa as colunas no SELECT.'},
+  {q:'Filtrar clientes de Osasco com mais de 30 anos:',o:["WHERE cidade='Osasco' OR idade>30","WHERE cidade='Osasco' AND idade>30","WHERE cidade=Osasco AND idade>30","FILTER cidade='Osasco'"],c:1,e:'AND combina condicoes obrigatorias. Textos com aspas simples.'},
+  {q:'SELECT COUNT(*) FROM produtos - tabela tem 7 linhas. Resultado?',o:['7','0','COUNT','Erro'],c:0,e:'COUNT(*) retorna o numero total de linhas.'},
+  {q:'Produtos do mais barato ao mais caro:',o:['ORDER BY preco ASC','ORDER BY preco','ORDER BY preco DESC','SORT BY preco'],c:1,e:'ORDER BY sozinho ja e crescente.'},
+  {q:'Erro em: SELECT nome AND cidade FROM clientes',o:['FROM errado','AND deve ser virgula','Tabela nao existe','SELECT errado'],c:1,e:'No SELECT, colunas separadas por virgula, nunca AND.'},
+  {q:'Media de precos de uma tabela:',o:['SELECT MEDIA(preco)','SELECT AVG(*)','SELECT AVG(preco)','SELECT MEAN(preco)'],c:2,e:'AVG(coluna) calcula a media de uma coluna.'},
+  {q:'O que faz o GROUP BY?',o:['Filtra linhas','Ordena resultados','Agrupa linhas com mesmo valor','Conta registros'],c:2,e:'GROUP BY agrupa linhas com o mesmo valor.'},
+  {q:'Diferenca entre WHERE e HAVING:',o:['Sem diferenca','WHERE filtra linhas, HAVING filtra grupos','HAVING filtra linhas, WHERE filtra grupos','WHERE e mais rapido'],c:1,e:'WHERE age antes do agrupamento, HAVING age depois.'},
+  {q:'Maior e menor preco na mesma consulta:',o:['SELECT MAX,MIN FROM p','SELECT MAX(preco) MIN(preco) FROM p','SELECT MAX(preco),MIN(preco) FROM p','SELECT RANGE(preco) FROM p'],c:2,e:'Virgula separa funcoes no SELECT.'},
+  {q:'O operador <> significa:',o:['Menor que','Maior ou igual','Diferente de','Menor ou igual'],c:2,e:'<> e o operador diferente de em SQL.'},
+  {q:'Contar produtos por categoria:',o:['SELECT COUNT(*) FROM p','SELECT categoria,COUNT(*) FROM p GROUP BY categoria','SELECT categoria COUNT FROM p','SELECT COUNT(categoria) FROM p'],c:1,e:'GROUP BY agrupa e COUNT conta cada grupo.'},
+  {q:'Codigo correto para filtrar texto:',o:["WHERE cat = Eletronicos","WHERE cat = \"Eletronicos\"","WHERE cat = 'Eletronicos'","WHERE cat LIKE Eletronicos"],c:2,e:"Textos no WHERE sempre com aspas simples."},
+  {q:'Clientes que NAO sao de Sao Paulo:',o:["WHERE cidade != 'SP'","WHERE cidade <> 'SP'","WHERE NOT cidade SP","Opcoes A e B estao corretas"],c:3,e:"!= e <> sao ambos validos para diferente de."},
+  {q:'Ordem correta e completa dos comandos:',o:['SELECT-WHERE-FROM-ORDER BY','FROM-SELECT-WHERE-GROUP BY','SELECT-FROM-WHERE-GROUP BY-HAVING-ORDER BY','SELECT-FROM-GROUP BY-WHERE'],c:2,e:'SELECT-FROM-WHERE-GROUP BY-HAVING-ORDER BY.'}
+];
+
+var qI=0,qC=0,qA=false,eI=0,eC=0,eA=false;
+
+function goTo(id){
+  var screens=['home','lessons','quiz','exam','cert'];
+  for(var i=0;i<screens.length;i++){
+    document.getElementById('screen-'+screens[i]).classList.remove('active');
+    document.getElementById('nb-'+screens[i]).classList.remove('active');
+  }
+  document.getElementById('screen-'+id).classList.add('active');
+  document.getElementById('nb-'+id).classList.add('active');
+  window.scrollTo(0,0);
+  updHome();
+  if(id==='lessons') renderLessons();
+  if(id==='cert') renderCert();
+}
+
+function updHome(){
+  var p=Math.round((S.done.length/6)*60+(S.ePassed?40:0));
+  document.getElementById('hp').style.width=p+'%';
+  document.getElementById('s-aulas').textContent=S.done.length+'/6';
+  document.getElementById('s-exerc').textContent=(S.qScore!==null?S.qScore:0)+'/10';
+  document.getElementById('s-sim').textContent=S.eScore!==null?S.eScore+'%':'--';
+}
+
+function renderLessons(){
+  var el=document.getElementById('lesson-list');
+  el.innerHTML='';
+  for(var i=0;i<LS.length;i++){
+    var l=LS[i];
+    var d=S.done.indexOf(l.id)!==-1;
+    var div=document.createElement('div');
+    div.className='litem'+(d?' done':'');
+    div.setAttribute('data-id',l.id);
+    div.innerHTML='<div class="licon '+(d?'li-done':'li-todo')+'">'+(d?'V':l.id)+'</div><div style="flex:1"><div style="font-size:14px;font-weight:600">'+l.title+'</div><div style="font-size:11px;color:#888">'+l.badge+'</div></div><span style="font-size:14px;color:#888">›</span>';
+    (function(lesson){div.onclick=function(){showLesson(lesson);};})(l);
+    el.appendChild(div);
+  }
+}
+
+function showLesson(l){
+  var a=document.getElementById('lesson-content');
+  a.style.display='block';
+  var lid=l.id;
+  a.innerHTML='<div class="card">'+l.html()+'<hr><button class="btn btn-p" onclick="doneLesson('+lid+')">Marcar como concluida</button></div>';
+  setTimeout(function(){a.scrollIntoView({behavior:'smooth',block:'start'});},100);
+}
+
+function doneLesson(id){
+  if(S.done.indexOf(id)===-1) S.done.push(id);
+  document.getElementById('lesson-content').style.display='none';
+  renderLessons();
+  updHome();
+  window.scrollTo(0,0);
+}
+
+function startQuiz(){
+  qI=0;qC=0;qA=false;
+  document.getElementById('qz-start').style.display='none';
+  document.getElementById('qz-result').style.display='none';
+  document.getElementById('qz-area').style.display='block';
+  renderQ();
+}
+
+function renderQ(){
+  qA=false;
+  var q=QZ[qI];
+  document.getElementById('qz-step').textContent='Questao '+(qI+1)+' de '+QZ.length;
+  document.getElementById('qz-pf').style.width=Math.round((qI/QZ.length)*100)+'%';
+  document.getElementById('qz-nw').style.display='none';
+  var h='<h3 style="margin-bottom:.8rem">'+q.q+'</h3>';
+  for(var i=0;i<q.o.length;i++){
+    h+='<button class="opt" id="qo'+i+'" onclick="ansQ('+i+')">'+q.o[i]+'</button>';
+  }
+  h+='<div class="fb" id="qfb"></div>';
+  document.getElementById('qz-card').innerHTML=h;
+}
+
+function ansQ(i){
+  if(qA) return;
+  qA=true;
+  var q=QZ[qI];
+  document.getElementById('qo'+q.c).className='opt ok';
+  if(i!==q.c) document.getElementById('qo'+i).className='opt err';
+  else qC++;
+  var fb=document.getElementById('qfb');
+  fb.textContent=(i===q.c?'Correto! ':'Errado. ')+q.e;
+  fb.className='fb show '+(i===q.c?'ok':'err');
+  document.getElementById('qz-nw').style.display='block';
+  document.getElementById('qz-next').textContent=qI===QZ.length-1?'Ver resultado':'Proxima';
+}
+
+function nextQuiz(){
+  qI++;
+  if(qI>=QZ.length){
+    S.qScore=qC;
+    var p=Math.round((qC/QZ.length)*100);
+    document.getElementById('qz-area').style.display='none';
+    document.getElementById('qz-result').style.display='block';
+    var msg=p>=70?'Otimo! Voce esta pronto para o simulado.':'Continue praticando! Revise as aulas.';
+    document.getElementById('qz-result').innerHTML='<div class="card" style="text-align:center;padding:1.5rem"><div style="font-size:42px;font-weight:700;color:#3C3489">'+qC+'/10</div><p style="margin:.4rem 0">Aproveitamento: '+p+'%</p><hr><p>'+msg+'</p><button class="btn btn-p" onclick="startQuiz()" style="margin-bottom:.5rem">Refazer</button><button class="btn btn-s" onclick="goTo(\'exam\')">Ir ao simulado</button></div>';
+    updHome();
+    return;
+  }
+  renderQ();
+}
+
+function startExam(){
+  eI=0;eC=0;eA=false;
+  document.getElementById('ex-start').style.display='none';
+  document.getElementById('ex-result').style.display='none';
+  document.getElementById('ex-area').style.display='block';
+  renderE();
+}
+
+function renderE(){
+  eA=false;
+  var q=EX[eI];
+  document.getElementById('ex-step').textContent='Questao '+(eI+1)+' de '+EX.length;
+  document.getElementById('ex-pf').style.width=Math.round((eI/EX.length)*100)+'%';
+  document.getElementById('ex-nw').style.display='none';
+  var h='<h3 style="margin-bottom:.8rem">'+q.q+'</h3>';
+  for(var i=0;i<q.o.length;i++){
+    h+='<button class="opt" id="eo'+i+'" onclick="ansE('+i+')">'+q.o[i]+'</button>';
+  }
+  h+='<div class="fb" id="efb"></div>';
+  document.getElementById('ex-card').innerHTML=h;
+}
+
+function ansE(i){
+  if(eA) return;
+  eA=true;
+  var q=EX[eI];
+  document.getElementById('eo'+q.c).className='opt ok';
+  if(i!==q.c) document.getElementById('eo'+i).className='opt err';
+  else eC++;
+  var fb=document.getElementById('efb');
+  fb.textContent=(i===q.c?'Correto! ':'Errado. ')+q.e;
+  fb.className='fb show '+(i===q.c?'ok':'err');
+  document.getElementById('ex-nw').style.display='block';
+  document.getElementById('ex-next').textContent=eI===EX.length-1?'Ver resultado':'Proxima';
+}
+
+function nextExam(){
+  eI++;
+  if(eI>=EX.length){
+    var p=Math.round((eC/EX.length)*100);
+    S.eScore=p;S.ePassed=p>=70;
+    document.getElementById('ex-area').style.display='none';
+    document.getElementById('ex-result').style.display='block';
+    var msg=S.ePassed?'Parabens! Voce foi aprovado!':'Voce precisa de 70%. Revise e tente novamente.';
+    var btn=S.ePassed?'<button class="btn btn-p" onclick="goTo(\'cert\')">Ver certificado</button>':'<button class="btn btn-p" onclick="startExam()">Tentar novamente</button>';
+    document.getElementById('ex-result').innerHTML='<div class="card" style="text-align:center;padding:1.5rem"><div style="font-size:42px;font-weight:700;color:'+(S.ePassed?'#27500A':'#791F1F')+'">'+p+'%</div><p style="margin:.4rem 0">'+eC+' de '+EX.length+' corretas</p><hr><p>'+msg+'</p>'+btn+'</div>';
+    updHome();
+    return;
+  }
+  renderE();
+}
+
+function renderCert(){
+  if(S.ePassed){
+    document.getElementById('cert-lock').style.display='none';
+    document.getElementById('cert-show').style.display='block';
+    document.getElementById('cert-pct').textContent=S.eScore+'%';
+    var d=new Date();
+    document.getElementById('cert-dt').textContent=d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
+  } else {
+    document.getElementById('cert-lock').style.display='block';
+    document.getElementById('cert-show').style.display='none';
+  }
+}
+
+updHome();
+</script>
+</body>
+</html>
